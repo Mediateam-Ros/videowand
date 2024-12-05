@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videowand Rostock Control Panel</title>
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Tablet layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafafa;
+            padding: 20px;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Header */
+        .header-container {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #004d40;
+            margin: 0;
+        }
+
+        #loginButton {
+            padding: 8px 16px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #00796b;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #loginButton:hover {
+            background-color: #004d40;
+        }
+
+        /* Button container */
+        .button-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+
+        #userButtons {
+            flex-direction: row;
+        }
+
+        /* Primary buttons */
+        .button {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+
+        .button.background-start {
+            background-color: #388e3c;
+        }
+
+        .button.background-stop {
+            background-color: #d32f2f;
+        }
+
+        .button-all-off {
+            background-color: #b71c1c;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Tabs */
+        .tabs {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #666;
+            border-radius: 8px 8px 0 0;
+            transition: color 0.3s, background-color 0.3s;
+        }
+
+        .tab.active {
+            color: #004d40;
+            background-color: #e0f2f1;
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Content buttons */
+        .content-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #00796b;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .content-button:hover {
+            background-color: #004d40;
+            transform: translateY(-3px);
+        }
+
+        /* Image and game list styles */
+        .img-div {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .img-div img {
+            width: 150px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #888;
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            color: #00796b;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .modal-content button {
+            width: 100%;
+            background-color: #00796b;
+            border: none;
+            color: white;
+            padding: 10px;
+            font-size: 1rem;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .modal-content button:hover {
+            background-color: #004d40;
+            transform: translateY(-3px);
+        }
+
+        .close {
+            color: #888;
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Inner Container im Tab */
+        .header-line-container {
+            width: 100%;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .header-text {
+            font-size: 20px;
+            color: #5c5c5c;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .line {
+            width: 100%;
+            border-top: 2px solid #5c5c5c;
+            margin-top: -5px;
+        }
+
+        /* Styling für die Spieler-Buttons */
+        .spieler-button:hover {
+            background-color: #585858;
+        }
+
+        .spieler-button b {
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .player-content {
+            background-color: white;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 750px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-content h2 {
+            color: #00796b;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .player-content button {
+            background-color: #000000;
+            border: none;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .periode-container {
+            background-color: lightgray;
+            border-radius: 10px;
+        }
+
+        .periode-container>.header-text {
+            margin-top: 5px;
+            color: black;
+            text-decoration: underline;
+        }
+
+        .periode {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .periode>button {
+            width: 33%;
+        }
+
+        .goal-controller {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            background-color: lightgray;
+            border-radius: 10px;
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+
+        /* Styling für die Spieler-Buttons */
+        .penalty-button:hover {
+            background-color: #585858;
+        }
+
+        .penalty-button b {
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .penalty-content {
+            background-color: white;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 750px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .penalty-content h2 {
+            color: #00796b;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .penalty-shots {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .penalty-shot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+        }
+
+        .penalty-shot-button {
+            width: 100px;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .penalty-shot-button.hit {
+            background-color: #4CAF50;
+        }
+
+        .penalty-shot-button.miss {
+            background-color: #F44336;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-container">
+        <h1>Videowand Rostock - Control Panel</h1>
+        <button id="loginButton" onclick="openLoginModal()">Login öffnen</button>
+    </div>
+
+    <div id="userButtons" class="button-container" style="display: none;">
+        <button class="button background-start" onclick="setDisplay('background', false)">Videowand starten</button>
+        <button class="button background-stop" onclick="setDisplay('background', true)">Videowand ausschalten</button>
+    </div>
+
+    <div class="button-container">
+        <button class="button button-all-off" onclick="allOff()">Alles Ausblenden (nur für den Notfall !!! )</button>
+    </div>
+
+    <div class="tabs">
+        <div class="tab" data-tab="piranhas" onclick="switchTab('piranhas')">Piranhas</div>
+        <div class="tab" data-tab="nachwuchs" onclick="switchTab('nachwuchs')">Nachwuchs</div>
+        <div class="tab" data-tab="u17" onclick="switchTab('u17')">U17</div>
+        <div class="tab" data-tab="freibeuter" onclick="switchTab('freibeuter')">Freibeuter</div>
+    </div>
+
+    <div id="piranhas" class="tab-content">
+        <div class="img-div">
+            <img src="rostock.png" alt="Piranhas Team Image">
+        </div>
+        <button class="content-button" onclick="setDisplay('imgDiv', true)">Bild freigeben</button>
+        <button class="content-button" onclick="setDisplay('nextGame', true)">Nächste Spiele</button>
+    </div>
+
+    <div id="nachwuchs" class="tab-content">
+        <div class="img-div">
+            <img src="timmendorf_rostock.png" alt="Piranhas Team Image">
+        </div>
+        <button class="content-button" onclick="setDisplay('u9', true)">U9 freigeben</button>
+    </div>
+
+    <div id="freibeuter" class="tab-content">
+        <div class="img-div">
+            <img src="freibeuter.png" alt="Freibeuter Team Image">
+        </div>
+        <div class="header-line-container">
+            <div class="header-text">Vor dem Spiel</div>
+            <div class="line"></div>
+            <button class="content-button activate" onclick="setDisplay('preGame', true)">Countdown anzeigen</button>
+        </div>
+        <div class="header-line-container">
+            <div class="header-text">Während des Spieles</div>
+            <div class="line"></div>
+            <div class="periode-container">
+                <div class="header-text">Drittelauswahl</div>
+                <div class="periode">
+                    <button class="content-button activate" onclick="setDisplay('1/3', true)">1 / 3</button>
+                    <button class="content-button activate" onclick="setDisplay('2/3', true)">2 / 3</button>
+                    <button class="content-button activate" onclick="setDisplay('3/3', true)">3 / 3</button>
+                </div>
+                <div class="periode">
+                    <button class="content-button activate" onclick="setDisplay('OT', true)">OVERTIME</button>
+                    <button class="content-button activate" onclick="setDisplay('SO', true)">PENALTY SCHIESSEN</button>
+                </div>
+            </div>
+            <div class="goal-controller">
+                <button class="content-button activate" onclick="setDisplay('torHeim', true)">Tor Heim</button>
+                <button class="content-button activate" onclick="setDisplay('torHeim', false)">Tor Heim
+                    abziehen</button>
+            </div>
+            <div class="goal-controller">
+                <button class="content-button activate" onclick="setDisplay('torGast', true)">Tor Gast</button>
+                <button class="content-button activate" onclick="setDisplay('torGast', false)">Tor Gast
+                    abziehen</button>
+            </div>
+            <br>
+            <button class="content-button" style="background-color: #1cb740;"
+                onclick="openPlayerModal()">Torschütze</button>
+        </div>
+        <div class="header-line-container">
+            <div class="header-text">Nach dem Spiel</div>
+            <div class="line"></div>
+            <button class="content-button activate" onclick="setDisplay('nextGame', true)">Nächstes Spiel
+                anzeigen</button>
+        </div>
+    </div>
+
+    <div id="u17" class="tab-content">
+        <div class="img-div">
+            <img src="timmendorf_rostock.png" alt="Freibeuter Team Image">
+        </div>
+        <div class="header-line-container">
+            <div class="header-text">Vor dem Spiel</div>
+            <div class="line"></div>
+            <button class="content-button activate" onclick="setDisplay('preGame', true)">Countdown anzeigen</button>
+        </div>
+        <div class="header-line-container">
+            <div class="header-text">Während des Spieles</div>
+            <div class="line"></div>
+            <div class="periode-container">
+                <div class="header-text">Drittelauswahl</div>
+                <div class="periode">
+                    <button class="content-button activate" onclick="setDisplay('1/3', true)">1 / 3</button>
+                    <button class="content-button activate" onclick="setDisplay('2/3', true)">2 / 3</button>
+                    <button class="content-button activate" onclick="setDisplay('3/3', true)">3 / 3</button>
+                </div>
+                <div class="periode">
+                    <button class="content-button activate" onclick="setDisplay('OT', true)">OVERTIME</button>
+                    <button class="content-button activate" onclick="setDisplay('SO', true)">PENALTY SCHIESSEN</button>
+                </div>
+            </div>
+            <div class="goal-controller">
+                <button class="content-button activate" onclick="setDisplay('torHeim', true)">Tor Heim</button>
+                <button class="content-button activate" onclick="setDisplay('torHeim', false)">Tor Heim
+                    abziehen</button>
+            </div>
+            <div class="goal-controller">
+                <button class="content-button activate" onclick="setDisplay('torGast', true)">Tor Gast</button>
+                <button class="content-button activate" onclick="setDisplay('torGast', false)">Tor Gast
+                    abziehen</button>
+            </div>
+            <br>
+        </div>
+        <div class="header-line-container">
+            <div class="header-text">Nach dem Spiel</div>
+            <div class="line"></div>
+            <button class="content-button activate" onclick="setDisplay('nextGame', true)">Nächstes Spiel
+                anzeigen</button>
+        </div>
+    </div>
+
+    <div id="leer" class="tab-content active">
+        <p style="font-weight: bold; font-size: 50px;">Bitte wähle ein Team aus.</p>
+    </div>
+
+    <div class="copyright">
+        &copy; - 2024 | Anthony Kühl | kuehl.anthony@outlook.de
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Login</h2>
+            <p id="loginError"
+                style="color: #d32f2f; background-color: #ffebee; padding: 10px; border-radius: 5px; display: none; font-weight: bold; text-align: center;">
+            </p>
+            <input type="text" id="email" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="handleLogin()">Login</button>
+        </div>
+    </div>
+
+    <div id="playerModal" class="modal">
+        <div class="player-content">
+            <span class="close" onclick="closePlayerModal()">&times;</span>
+            <h2>Torschütze - REC Freibeuter</h2>
+            <div id="spielerListe" style="display: grid; grid-template-columns: auto auto auto; gap: 5px;">
+            </div>
+            <button id="hideTorschuetzeButton" onclick="hideTorschuetze()">Ausblenden</button>
+        </div>
+    </div>
+
+    <div id="penaltyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePenaltyModal()">&times;</span>
+            <h2>Penalty schiessen</h2>
+            <div id="penaltyContainer">
+                <h3>Heim Team</h3>
+                <div id="homePenaltyShots" class="penalty-shots">
+                    <div class="penalty-shot">
+                        <button class="penalty-shot-button hit" onclick="setPenaltyShot('home', 1, true)">Schuss 1 getroffen</button>
+                        <button class="penalty-shot-button miss" onclick="setPenaltyShot('home', 1, false)">Schuss 1 verschossen</button>
+                    </div>
+                    <div class="penalty-shot">
+                        <button class="penalty-shot-button hit" onclick="setPenaltyShot('home', 2, true)">Schuss 2 getroffen</button>
+                        <button class="penalty-shot-button miss" onclick="setPenaltyShot('home', 2, false)">Schuss 2 verschossen</button>
+                    </div>
+                    <div class="penalty-shot">
+                        <button class="penalty-shot-button hit" onclick="setPenaltyShot('home', 3, true)">Schuss 3 getroffen</button>
+                        <button class="penalty-shot-button miss" onclick="setPenaltyShot('home', 3, false)">Schuss 3 verschossen</button>
+                    </div>
+                </div>
+
+                <h3>Auswärts Team</h3>
+                <div id="awayPenaltyShots" class="penalty-shots">
+                    <div class="penalty-shot">
+                        <button class="penalty-shot-button hit" onclick="setPenaltyShot('away', 1, true)">Schuss 1 getroffen</button>
+                        <button class="penalty-shot-button miss" onclick="setPenaltyShot('away', 1, false)">Schuss 1 verschossen</button>
+                    </div>
+                    <div class="penalty-shot">
+                        <button class="penalty-shot-button hit" onclick="setPenaltyShot('away', 2, true)">Schuss 2 getroffen</button>
+                        <button class="penalty-shot-button miss" onclick="setPenaltyShot('away', 2, false)">Schuss 2 verschossen</button>
+                    </div>
+                    <div class="penalty-shot">
+                        <button class="penalty-shot-button hit" onclick="setPenaltyShot('away', 3, true)">Schuss 3 getroffen</button>
+                        <button class="penalty-shot-button miss" onclick="setPenaltyShot('away', 3, false)">Schuss 3 verschossen</button>
+                    </div>
+                </div>
+            </div>
+            <button onclick="resetAllPenaltyShots()">Alle Punkte leeren</button>
+            <button onclick="closePenaltyModal()">Schließen</button>
+        </div>
+    </div>
+
+
+
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const firebaseConfig = {
+                apiKey: "AIzaSyCFhS0aAgq0RQdgncI1lD1adbyVHGDgmcI",
+                authDomain: "videowand-43140.firebaseapp.com",
+                databaseURL: "https://videowand-43140-default-rtdb.europe-west1.firebasedatabase.app/",
+                projectId: "videowand-43140",
+                storageBucket: "videowand-43140.appspot.com",
+                messagingSenderId: "777250256351",
+                appId: "1:777250256351:web:f0700b48c645037c82006a"
+            };
+
+            firebase.initializeApp(firebaseConfig);
+            const database = firebase.database();
+
+            window.setDisplay = async function (displayType, status) {
+                try {
+                    const isPiranhasTab = document.querySelector('.tab.active').getAttribute('data-tab') === 'piranhas';
+                    const basePath = isPiranhasTab ? '/piranhas' : '/displayStatus';
+                    const updates = {};
+
+                    const gameInfoTypes = ["1/3", "2/3", "3/3", "OT", "SO"];
+                    const excludeFields = ['background', 'torHeimCount', 'torGastCount', 'drittel'];
+
+                    if (gameInfoTypes.includes(displayType)) {
+                        const snapshot = await database.ref(basePath).once('value');
+                        snapshot.forEach(child => {
+                            if (!excludeFields.includes(child.key)) {
+                                updates[`${basePath}/${child.key}`] = false;
+                            }
+                        });
+                        updates[`${basePath}/gameInfo`] = true;
+                        updates[`${basePath}/drittel`] = displayType;
+
+                        if (displayType === 'SO' && status) {
+                            openPenaltyModal();
+                        }
+                    } else if (displayType === 'torHeim' || displayType === 'torGast') {
+                        const torPath = `${basePath}/${displayType === 'torHeim' ? 'torHeimCount' : 'torGastCount'}`;
+                        const snapshot = await database.ref(torPath).once('value');
+                        const currentTorCount = snapshot.val() || 0;
+
+                        if (status) {
+                            updates[torPath] = currentTorCount + 1;
+                        } else {
+                            updates[torPath] = Math.max(0, currentTorCount - 1);
+                        }
+                        updates[`${basePath}/${displayType}`] = status;
+
+                        setTimeout(async () => {
+                            const resetUpdate = {};
+                            resetUpdate[`${basePath}/${displayType}`] = false;
+                            await database.ref().update(resetUpdate);
+                        }, 500);
+                    } else {
+                        if (displayType !== 'background') {
+                            const snapshot = await database.ref(basePath).once('value');
+                            snapshot.forEach(child => {
+                                if (!excludeFields.includes(child.key)) {
+                                    updates[`${basePath}/${child.key}`] = false;
+                                }
+                            });
+                        }
+                        updates[`${basePath}/${displayType}`] = status;
+                    }
+
+                    await database.ref().update(updates);
+                } catch (error) {
+                    console.error(`Error setting display status for "${displayType}":`, error);
+                }
+            };
+
+            window.openPenaltyModal = function () {
+                document.getElementById("penaltyModal").style.display = "block";
+            };
+
+            window.closePenaltyModal = function () {
+                document.getElementById("penaltyModal").style.display = "none";
+            };
+
+            window.setPenaltyShot = async function (team, shotNumber, hit) {
+                try {
+                    const path = `/penaltyShots/${team}/shot${shotNumber}`;
+                    await firebase.database().ref(path).set(hit);
+                    console.log(`${team} penalty shot ${shotNumber} marked as ${hit ? "hit" : "miss"}`);
+                } catch (error) {
+                    console.error("Error setting penalty shot:", error);
+                }
+            };
+
+            window.resetAllPenaltyShots = async function () {
+                try {
+                    const updates = {
+                        '/penaltyShots/home/shot1': "",
+                        '/penaltyShots/home/shot2': "",
+                        '/penaltyShots/home/shot3': "",
+                        '/penaltyShots/away/shot1': "",
+                        '/penaltyShots/away/shot2': "",
+                        '/penaltyShots/away/shot3': ""
+                    };
+                    await firebase.database().ref().update(updates);
+                    console.log("All penalty shots reset to neutral.");
+                } catch (error) {
+                    console.error("Error resetting penalty shots:", error);
+                }
+            };
+
+            window.fetchPlayers = async function () {
+                try {
+                    const response = await fetch("data.json");
+
+                    if (!response.ok) throw new Error("Netzwerkantwort war nicht ok");
+
+                    const players = await response.json();
+                    const playerList = document.getElementById("spielerListe");
+                    playerList.innerHTML = '';
+
+                    if (players && players.length > 0) {
+                        players.sort((a, b) => a.rueckennummer - b.rueckennummer);
+
+                        players.forEach(player => {
+                            const button = document.createElement("button");
+                            button.className = "spieler-button";
+                            button.innerHTML = `<b>${player.rueckennummer}</b> - ${player.vorname} ${player.nachname}`;
+                            button.onclick = () => setTorschuetze(player.id);
+                            playerList.appendChild(button);
+                        });
+                    } else {
+                        playerList.innerHTML = "<p>Keine Spieler gefunden</p>";
+                    }
+                } catch (error) {
+                    console.error("Fehler beim Abrufen der Spieler:", error);
+                }
+            };
+
+            window.allOff = async function () {
+                try {
+                    const isPiranhasTab = document.querySelector('.tab.active').getAttribute('data-tab') === 'piranhas';
+                    const basePath = isPiranhasTab ? '/piranhas' : '/displayStatus';
+
+                    const snapshot = await database.ref(basePath).once('value');
+                    const updates = {};
+
+                    const excludeFields = ['background', 'torHeimCount', 'torGastCount', 'drittel'];
+
+                    snapshot.forEach(child => {
+                        if (!excludeFields.includes(child.key)) {
+                            updates[`${basePath}/${child.key}`] = false;
+                        }
+                    });
+
+                    await database.ref().update(updates);
+                } catch (error) {
+                    console.error("Error turning off all displays:", error);
+                }
+            };
+
+
+            window.switchTab = function (tabId) {
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+
+                document.getElementById(tabId).classList.add('active');
+                document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+            }
+
+            firebase.auth().onAuthStateChanged(user => {
+                const loginButton = document.getElementById("loginButton");
+                const userButtons = document.getElementById("userButtons");
+
+                if (user) {
+                    loginButton.textContent = "Abmelden";
+                    loginButton.onclick = logout;
+                    userButtons.style.display = "flex";
+                    document.querySelector(".tab[data-tab='piranhas']").style.display = "block";
+                } else {
+                    loginButton.textContent = "Login öffnen";
+                    loginButton.onclick = openLoginModal;
+                    userButtons.style.display = "none";
+                    document.querySelector(".tab[data-tab='piranhas']").style.display = "none";
+                }
+            });
+
+            window.openLoginModal = function () {
+                document.getElementById("loginModal").style.display = "block";
+            }
+
+            window.closeLoginModal = function () {
+                document.getElementById("loginModal").style.display = "none";
+            }
+
+            window.handleLogin = function () {
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+                const loginError = document.getElementById("loginError");
+
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then(() => {
+                        closeLoginModal();
+                        loginError.style.display = "none";
+                    })
+                    .catch(error => {
+                        loginError.textContent = "Login fehlgeschlagen: Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.";
+                        loginError.style.display = "block";
+                        console.error("Fehler beim Login:", error);
+                    });
+            }
+
+            function logout() {
+                firebase.auth().signOut().catch(error => {
+                    console.error("Error during logout:", error);
+                });
+            }
+
+            window.openPlayerModal = function () {
+                document.getElementById("playerModal").style.display = "block";
+                fetchPlayers();
+            }
+
+            window.closePlayerModal = function () {
+                document.getElementById("playerModal").style.display = "none";
+            }
+
+            window.setTorschuetze = async function (playerId) {
+                try {
+                    const database = firebase.database();
+                    const updates = {};
+
+                    updates['displayStatus/torschuetze'] = playerId;
+
+                    await database.ref().update(updates);
+
+                    const torschuetzeDisplay = document.getElementById("hideTorschuetzeButton");
+                    torschuetzeDisplay.style.display = "inline-block";
+                } catch (error) {
+                    console.error("Fehler beim Speichern des Torschützen:", error);
+                }
+            }
+
+            window.hideTorschuetze = async function () {
+                try {
+                    const database = firebase.database();
+
+                    await database.ref('/displayStatus/torschuetze').remove();
+
+                    const torschuetzeDisplay = document.getElementById("hideTorschuetzeButton");
+                    torschuetzeDisplay.style.display = "none";
+
+                    console.log("Torschütze wurde ausgeblendet und aus der Datenbank entfernt.");
+                } catch (error) {
+                    console.error("Fehler beim Ausblenden des Torschützen:", error);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
